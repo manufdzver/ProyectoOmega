@@ -13,7 +13,7 @@ public class ChatSender extends Thread{
     private JButton btnEnviar;
     private JTextArea txtMensaje;
     private JComboBox cbDestinatario;
-
+    private JFrame chatroom;
 
     private static String url = ActiveMQConnection.DEFAULT_BROKER_URL;
     private static String destinatario;
@@ -21,7 +21,8 @@ public class ChatSender extends Thread{
     private static ObjectMessage objMessageSender;
     private Mensaje mensaje = new Mensaje();
 
-    public ChatSender(Usuario usr, JButton btnSol, JTextField txtSol, JButton btnEnv, JTextArea txtMens, JComboBox dest){
+    public ChatSender(JFrame frame, Usuario usr, JButton btnSol, JTextField txtSol, JButton btnEnv, JTextArea txtMens, JComboBox dest){
+        this.chatroom = frame;
         this.usuario = usr;
         this.btnSolicitud = btnSol;
         this.txtSolicitud = txtSol;
@@ -29,6 +30,23 @@ public class ChatSender extends Thread{
         this.txtMensaje = txtMens;
         this.cbDestinatario = dest;
         destinatario = dest.getSelectedItem().toString();
+
+        chatroom.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+        chatroom.addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+                if (JOptionPane.showConfirmDialog(chatroom,
+                        "Are you sure you want to close this window?", "Close Window?",
+                        JOptionPane.YES_NO_OPTION,
+                        JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION){
+
+                    System.out.println("Ya termino ");
+                    chatroom.dispose();
+                    txtMensaje.setText("Good bye!");
+                    enviarMensaje();
+                }
+            }
+        });
 
         btnSolicitud.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -68,6 +86,7 @@ public class ChatSender extends Thread{
                 System.out.println("Sending: " + texto + ", Destinatario: " + destinatario + "\n");
                 objMessageSender.setObject(mensaje);
                 messageProducer.send(objMessageSender);
+                txtMensaje.setText("");
 
             } catch (JMSException e) {
                 e.printStackTrace();

@@ -4,7 +4,6 @@ public class Usuario implements Serializable {
 
     private String nombre;
     private String clavePrivada;
-    //private String pswd;
     //private String[] contactos;
 
 

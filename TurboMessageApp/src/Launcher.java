@@ -11,6 +11,8 @@ public class Launcher {
     static JLabel numero = new JLabel();
     static JLabel titulo = new JLabel();
 
+    //diccionario
+
     public static void main(String[] args) {
 
         //Crea la ventana de registro
@@ -119,12 +121,13 @@ public class Launcher {
                 Usuario usuario = new Usuario(inputNombre.getText(), clave);
 
                 //Hilo para la recepcion de solicitudes
+
                 //Hilo para la recepcion de mensajes
                 ChatReciever reciever = new ChatReciever(frame2, usuario, msgReciever);
                 reciever.start();
 
                 //Hilo para el envio de mensajes
-                ChatSender sender = new ChatSender(usuario, btnAgregar, txtNomNuevo, btnEnviar, msgSender, cbDestinatario);
+                ChatSender sender = new ChatSender(frame2, usuario, btnAgregar, txtNomNuevo, btnEnviar, msgSender, cbDestinatario);
                 //TODO:
                 //Registrar usuario nuevo en archivo txt (BaseDatos)
                 //Consultar usuarios existentes en archivo txt (BaseDatos)

@@ -23,26 +23,7 @@ public class ChatReciever extends Thread{
         this.textField = txt;
         this.colaPriv = usr.getClavePrivada();
 
-        //TODO mandar mensaje a mi mismo con "Goodbye" para cerrar el hilo al salir
-        chatroom.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
-        chatroom.addWindowListener(new java.awt.event.WindowAdapter() {
-            @Override
-            public void windowClosing(java.awt.event.WindowEvent windowEvent) {
-                if (JOptionPane.showConfirmDialog(chatroom,
-                        "Are you sure you want to close this window?", "Close Window?",
-                        JOptionPane.YES_NO_OPTION,
-                        JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION){
-                    goodByeReceived=true;
-                    System.out.println("Ya termino: "+ goodByeReceived);
-                    chatroom.dispose();
-                    try {
-                        connection.close();
-                    } catch (JMSException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        });
+
 
     }
 
@@ -81,7 +62,7 @@ public class ChatReciever extends Thread{
                     System.out.println("Goodbye");
                 }
             }
-            System.out.println("Goodbye");
+            System.out.println("Termino el hilo Reciever");
 
             messageConsumer.close();
             session.close();
