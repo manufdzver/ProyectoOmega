@@ -75,22 +75,56 @@ public class Launcher {
                 //Cajas de rececpion/envio de mensajes
                 JTextArea msgReciever = new JTextArea(100,1);
                 msgReciever.setLineWrap(true);
+                msgReciever.setEditable(false);
                 JTextArea msgSender = new JTextArea(100,1);
                 msgSender.setLineWrap(true);
-                JScrollPane scroll1 = new JScrollPane(msgSender);
+                JScrollPane scroll1 = new JScrollPane(msgReciever);
                 scroll1.setBounds(300, 50, 450,150);
-                JScrollPane scroll2 = new JScrollPane(msgReciever);
+                JScrollPane scroll2 = new JScrollPane(msgSender);
                 scroll2.setBounds(300, 250, 450,60);
                 frame2.add(scroll1);
                 frame2.add(scroll2);
 
+                //Seccion de agregar contacto nuevo
+                JLabel agregar = new JLabel("Agrega un nuevo contacto");
+                agregar.setBounds(20,250,200,25);
+                frame2.add(agregar);
+                JLabel lblNomNuevo = new JLabel("Nombre:");
+                lblNomNuevo.setBounds(20,300,200,25);
+                frame2.add(lblNomNuevo);
+                JTextField txtNomNuevo = new JTextField();
+                txtNomNuevo.setBounds(100,300,160,25);
+                frame2.add(txtNomNuevo);
+                JButton btnAgregar = new JButton("Enviar solicitud");
+                btnAgregar.setBounds(80, 380, 150,25 );
+                frame2.add(btnAgregar);
 
+                //Seleccion de destinatario y envio
+                JLabel lblDestinatario = new JLabel("Selecciona el destinatario:");
+                lblDestinatario.setBounds(300, 330, 200,25);
+                frame2.add(lblDestinatario);
+                JComboBox cbDestinatario = new JComboBox();
+                cbDestinatario.setBounds(480, 330, 200,25);
+                cbDestinatario.addItem("SBR123");
+                frame2.add(cbDestinatario);
+                JButton btnEnviar = new JButton("Enviar mensaje");
+                btnEnviar.setBounds(300, 380, 150,25);
+                frame2.add(btnEnviar);
+
+                //Crea al usuario al registrarlo e instancia 3 hilos:
+                // Recepcion de solicitudes
+                // Recepcion de mensajes
+                // Envio de mensajes y solicitudes
                 String clave = inputIniciales.getText()+inputNum.getText();
                 Usuario usuario = new Usuario(inputNombre.getText(), clave);
+
+                //Hilo para la recepcion de solicitudes
                 //Hilo para la recepcion de mensajes
-                ChatReciever reciever = new ChatReciever();
+                ChatReciever reciever = new ChatReciever(frame2, usuario, msgReciever);
+                reciever.start();
+
                 //Hilo para el envio de mensajes
-                ChatSender sender = new ChatSender();
+                ChatSender sender = new ChatSender(usuario, btnAgregar, txtNomNuevo, btnEnviar, msgSender, cbDestinatario);
                 //TODO:
                 //Registrar usuario nuevo en archivo txt (BaseDatos)
                 //Consultar usuarios existentes en archivo txt (BaseDatos)
