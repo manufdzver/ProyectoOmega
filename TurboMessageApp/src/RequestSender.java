@@ -7,7 +7,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
 
-public class ChatSender extends Thread{
+public class RequestSender extends Thread{
     private Usuario usuario;
     private JButton btnSolicitud;
     private JTextField txtSolicitud;
@@ -23,7 +23,7 @@ public class ChatSender extends Thread{
     private Mensaje mensaje = new Mensaje();
     private HashMap<String, Usuario> directorioTotal;
 
-    public ChatSender(JFrame frame, Usuario usr, JButton btnSol, JTextField txtSol, JButton btnEnv, JTextArea txtMens, JComboBox dest, HashMap directorioTotal){
+    public RequestSender(JFrame frame, Usuario usr, JButton btnSol, JTextField txtSol, JButton btnEnv, JTextArea txtMens, JComboBox dest, HashMap directorioTotal){
         this.chatroom = frame;
         this.usuario = usr;
         this.btnSolicitud = btnSol;
@@ -37,16 +37,11 @@ public class ChatSender extends Thread{
         chatroom.addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
             public void windowClosing(java.awt.event.WindowEvent windowEvent) {
-                if (JOptionPane.showConfirmDialog(chatroom,
-                        "Are you sure you want to close this window?", "Close Window?",
-                        JOptionPane.YES_NO_OPTION,
-                        JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION){
-
                     System.out.println("Ya termino ");
                     chatroom.dispose();
                     txtMensaje.setText("Good bye!");
-                    enviarMensaje();
-                }
+                    destinatario = usuario.getNombre();
+                    enviarSolicitud();
             }
         });
 
@@ -55,23 +50,12 @@ public class ChatSender extends Thread{
                 enviarSolicitud();
             }
         });
-        btnEnviar.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                enviarMensaje();
-            }
-        });
     }
 
     public void enviarSolicitud(){
-
-    }
-
-    public void enviarMensaje(){
-        String texto = txtMensaje.getText();
-        destinatario = cbDestinatario.getSelectedItem().toString();
-        if(!texto.equals("")) {
+        String destino = txtSolicitud.getText();
+        if(!destino.equals("")) {
             try {
-
                 ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(url);
                 connectionFactory.setTrustAllPackages(true);
                 Connection connection = connectionFactory.createConnection(); //Crea la conexion
@@ -79,24 +63,25 @@ public class ChatSender extends Thread{
 
                 Session session = connection.createSession(false /*Transacter*/, Session.AUTO_ACKNOWLEDGE); //Cuando consume un mensaje, automaticamente manda el acknowledgment
 
-                Destination producer = session.createQueue(destinatario);
+                Destination producer = session.createQueue(destino);
                 messageProducer = session.createProducer(producer);
                 objMessageSender = session.createObjectMessage();
 
-                mensaje.setMensaje(texto);
+                mensaje.setMensaje("Solicitud de amistad");
                 mensaje.setClavePrivada(usuario.getClavePrivada());
-                mensaje.setTipo(1);
-                System.out.println("Sending: " + texto + ", Destinatario: " + destinatario + "\n");
+                //mensaje.setTipo(2);
+                mensaje.setTipo(3);
+                System.out.println("Sending: solicitud a Destinatario: " + destino + "\n de: "+usuario.getNombre());
                 objMessageSender.setObject(mensaje);
                 messageProducer.send(objMessageSender);
-                txtMensaje.setText("");
+                txtSolicitud.setText("");
 
             } catch (JMSException e) {
                 e.printStackTrace();
             }
         }
         else{
-            System.out.println("No hay nada escrito");
+            System.out.println("No hay nadie quien agregar");
         }
     }
 

@@ -2,9 +2,12 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Launcher {
 
+    static HashMap<String, Usuario> directorioTotal = new HashMap<String, Usuario>();
     static JFrame frame = new JFrame("Turbo-Message App");
     static JLabel nombre  = new JLabel();
     static JLabel iniciales = new JLabel();
@@ -117,17 +120,28 @@ public class Launcher {
                 // Recepcion de solicitudes
                 // Recepcion de mensajes
                 // Envio de mensajes y solicitudes
+
                 String clave = inputIniciales.getText()+inputNum.getText();
-                Usuario usuario = new Usuario(inputNombre.getText(), clave);
+                String nombre = inputNombre.getText();
+                Usuario usuario = directorioTotal.get(clave);
+
+                if(usuario == null){
+                    usuario = new Usuario(nombre, clave);
+                    directorioTotal.put(clave,usuario);
+                }
+
+                System.out.println(directorioTotal.values());
 
                 //Hilo para la recepcion de solicitudes
 
                 //Hilo para la recepcion de mensajes
-                ChatReciever reciever = new ChatReciever(frame2, usuario, msgReciever);
+                ChatReciever reciever = new ChatReciever(frame2, usuario, msgReciever, directorioTotal);
                 reciever.start();
-
+                RequestReciever rReciever = new RequestReciever(frame2, usuario, msgReciever,cbDestinatario,directorioTotal);
+                rReciever.start();
                 //Hilo para el envio de mensajes
-                ChatSender sender = new ChatSender(frame2, usuario, btnAgregar, txtNomNuevo, btnEnviar, msgSender, cbDestinatario);
+                ChatSender sender = new ChatSender(frame2, usuario, btnAgregar, txtNomNuevo, btnEnviar, msgSender, cbDestinatario,directorioTotal);
+                RequestSender rSender = new RequestSender(frame2, usuario, btnAgregar, txtNomNuevo, btnEnviar, msgSender, cbDestinatario, directorioTotal);
                 //TODO:
                 //Registrar usuario nuevo en archivo txt (BaseDatos)
                 //Consultar usuarios existentes en archivo txt (BaseDatos)

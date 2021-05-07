@@ -3,15 +3,15 @@ import java.io.Serializable;
 public class Mensaje implements Serializable {
     private int tipo;
     private String mensaje;
-    private Usuario autor;
+    private String clavePrivada;
 
     public Mensaje(){
     }
 
-    public Mensaje(int tipo, String mensaje, Usuario autor) {
+    public Mensaje(int tipo, String mensaje, String clavePrivada) {
         this.tipo = tipo;
         this.mensaje = mensaje;
-        this.autor = autor;
+        this.clavePrivada = clavePrivada;
     }
 
     public int getTipo() {
@@ -30,11 +30,11 @@ public class Mensaje implements Serializable {
         this.mensaje = mensaje;
     }
 
-    public Usuario getAutor() {
-        return autor;
+    public String getClavePrivada() {
+        return clavePrivada;
     }
 
-    public void setAutor(Usuario autor) {
-        this.autor = autor;
+    public void setClavePrivada(String clavePrivada) {
+        this.clavePrivada = clavePrivada;
     }
 }
