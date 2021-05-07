@@ -38,8 +38,6 @@ public class RequestReciever extends Thread{
 
     @Override
     public void run() {
-        System.out.println("Usuario: " + usuario.getNombre());
-        System.out.println("Clave publica: " + usuario.getClavePrivada());
         getMessages();
     }
 
@@ -59,18 +57,16 @@ public class RequestReciever extends Thread{
                 objMessageReciever = (ObjectMessage) messageConsumer.receive();
                 mensaje = (Mensaje) objMessageReciever.getObject();//Lee el primer mensaje en la cola
                 if (mensaje != null) {
-                    if(mensaje.getTipo()==2){
+                    if(mensaje.getTipo()==2){ //Pregunta si quieres ser amigo
+                        //TODO preguntar si acepta o no
                         Usuario autor = directorioTotal.get(mensaje.getClavePrivada());
-                        System.out.println("Message received");
-
                         textField.setText(textField.getText() + "\n"+"Te agregó: " +autor.getNombre());
                         usuario.addDirectorio(autor);
                         actualizaDirectorio();
                         aceptarSolicitud(autor.getNombre());
                     }
-                    if(mensaje.getTipo()==3){
+                    if(mensaje.getTipo()==3){//recibe una respuesta de "Si" a la solicitud y actualiza directorio
                         Usuario autor = directorioTotal.get(mensaje.getClavePrivada());
-                        System.out.println("Message received");
 
                         textField.setText(textField.getText() + "\n"+"Te agregó: " +autor.getNombre());
                         usuario.addDirectorio(autor);
@@ -79,7 +75,7 @@ public class RequestReciever extends Thread{
                 }
                 if (mensaje != null && mensaje.getMensaje().equals("Good bye!")) {
                     goodByeReceived = true;
-                    System.out.println("Goodbye");
+                    System.out.println("Goodbye Request");
                 }
             }
             System.out.println("Termino el hilo RequestReciever de"+usuario.getNombre());
@@ -117,7 +113,6 @@ public class RequestReciever extends Thread{
 
                 mensaje.setMensaje("Solicitud de amistad");
                 mensaje.setClavePrivada(usuario.getClavePrivada());
-                //mensaje.setTipo(2);
                 mensaje.setTipo(3);
                 System.out.println("Sending: aceptacion a Destinatario: " + destino + "\n de: " + usuario.getNombre());
                 objMessageSender.setObject(mensaje);

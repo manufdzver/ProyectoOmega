@@ -38,7 +38,8 @@ public class RequestSender extends Thread{
             @Override
             public void windowClosing(java.awt.event.WindowEvent windowEvent) {
                 System.out.println("Cierra cola publica");
-                txtMensaje.setText("Good bye!");
+                mensaje.setMensaje("Good bye!");
+                mensaje.setTipo(1);
                 enviarSolicitud(-1);
                 chatroom.dispose();
             }
@@ -53,8 +54,11 @@ public class RequestSender extends Thread{
 
     public void enviarSolicitud(int opcion){
         String destino;
-        if(opcion>0)
+        if(opcion>0) {
             destino = txtSolicitud.getText();
+            mensaje.setMensaje("Solicitud de amistad");
+            mensaje.setTipo(2);
+        }
         else
             destino = usuario.getNombre();
         if(!destino.equals("")) {
@@ -70,10 +74,8 @@ public class RequestSender extends Thread{
                 messageProducer = session.createProducer(producer);
                 objMessageSender = session.createObjectMessage();
 
-                mensaje.setMensaje("Solicitud de amistad");
+
                 mensaje.setClavePrivada(usuario.getClavePrivada());
-                //mensaje.setTipo(2);
-                mensaje.setTipo(2);
                 System.out.println("Sending: solicitud a Destinatario: " + destino + "\n de: "+usuario.getNombre());
                 objMessageSender.setObject(mensaje);
                 messageProducer.send(objMessageSender);

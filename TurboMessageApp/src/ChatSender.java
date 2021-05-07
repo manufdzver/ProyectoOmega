@@ -68,7 +68,6 @@ public class ChatSender extends Thread{
         if(opcion>0)
             destinatario = cbDestinatario.getSelectedItem().toString();
 
-
         if(!texto.equals("")) {
             try {
 
