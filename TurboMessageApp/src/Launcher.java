@@ -33,19 +33,13 @@ public class Launcher {
         frame.add(inputNombre);
         frame.add(nombre);
 
-        iniciales.setText("Ingresa tus iniciales: ");
+        iniciales.setText("Ingresa tu usuario: ");
         iniciales.setBounds(40,105,250,25);
         JTextField inputIniciales = new JTextField();
         inputIniciales.setBounds(250,105,200,25);
         frame.add(inputIniciales);
         frame.add(iniciales);
 
-        numero.setText("Ingresa un número de 3 dígitos: ");
-        numero.setBounds(40,145,250,25);
-        JTextField inputNum = new JTextField();
-        inputNum.setBounds(250,145,200,25);
-        frame.add(inputNum);
-        frame.add(numero);
 
         //Registra al juagdor al hacer click en el boton y abre su ventana de chat personal
         JButton registrar = new JButton("Iniciar sesión / Registrar");
@@ -121,7 +115,7 @@ public class Launcher {
                 // Recepcion de mensajes
                 // Envio de mensajes y solicitudes
 
-                String clave = inputIniciales.getText()+inputNum.getText();
+                String clave = inputIniciales.getText();
                 String nombre = inputNombre.getText();
                 Usuario usuario = directorioTotal.get(clave);
 

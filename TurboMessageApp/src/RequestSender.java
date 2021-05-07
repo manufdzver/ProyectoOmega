@@ -70,7 +70,7 @@ public class RequestSender extends Thread{
                 mensaje.setMensaje("Solicitud de amistad");
                 mensaje.setClavePrivada(usuario.getClavePrivada());
                 //mensaje.setTipo(2);
-                mensaje.setTipo(3);
+                mensaje.setTipo(2);
                 System.out.println("Sending: solicitud a Destinatario: " + destino + "\n de: "+usuario.getNombre());
                 objMessageSender.setObject(mensaje);
                 messageProducer.send(objMessageSender);

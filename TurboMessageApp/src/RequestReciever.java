@@ -22,6 +22,10 @@ public class RequestReciever extends Thread{
     private Connection connection;
     private HashMap<String, Usuario> directorioTotal;
 
+    private static MessageProducer messageProducer;
+    private static ObjectMessage objMessageSender;
+    private Mensaje mensaje = new Mensaje();
+
     public RequestReciever(JFrame frame, Usuario usr, JTextArea txt,JComboBox cbDestinatario, HashMap directorioTotal){
         this.chatroom = frame;
         this.usuario = usr;
@@ -56,7 +60,13 @@ public class RequestReciever extends Thread{
                 mensaje = (Mensaje) objMessageReciever.getObject();//Lee el primer mensaje en la cola
                 if (mensaje != null) {
                     if(mensaje.getTipo()==2){
-                        
+                        Usuario autor = directorioTotal.get(mensaje.getClavePrivada());
+                        System.out.println("Message received");
+
+                        textField.setText(textField.getText() + "\n"+"Te agregó: " +autor.getNombre());
+                        usuario.addDirectorio(autor);
+                        actualizaDirectorio();
+                        aceptarSolicitud(autor.getNombre());
                     }
                     if(mensaje.getTipo()==3){
                         Usuario autor = directorioTotal.get(mensaje.getClavePrivada());
@@ -89,6 +99,35 @@ public class RequestReciever extends Thread{
         while (miIterator.hasNext()) {
             Map.Entry mapElement = (Map.Entry)miIterator.next();
             cbDestinatario.addItem(mapElement.getValue());
+        }
+    }
+    public void aceptarSolicitud(String destino) {
+        if (!destino.equals("")) {
+            try {
+                ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(url);
+                connectionFactory.setTrustAllPackages(true);
+                Connection connection = connectionFactory.createConnection(); //Crea la conexion
+                connection.start(); //Arranca la conexion
+
+                Session session = connection.createSession(false /*Transacter*/, Session.AUTO_ACKNOWLEDGE); //Cuando consume un mensaje, automaticamente manda el acknowledgment
+
+                Destination producer = session.createQueue(destino);
+                messageProducer = session.createProducer(producer);
+                objMessageSender = session.createObjectMessage();
+
+                mensaje.setMensaje("Solicitud de amistad");
+                mensaje.setClavePrivada(usuario.getClavePrivada());
+                //mensaje.setTipo(2);
+                mensaje.setTipo(3);
+                System.out.println("Sending: aceptacion a Destinatario: " + destino + "\n de: " + usuario.getNombre());
+                objMessageSender.setObject(mensaje);
+                messageProducer.send(objMessageSender);
+
+            } catch (JMSException e) {
+                e.printStackTrace();
+            }
+        } else {
+            System.out.println("No hay nadie quien agregar");
         }
     }
 }
