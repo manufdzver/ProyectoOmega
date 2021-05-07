@@ -37,16 +37,13 @@ public class ChatSender extends Thread{
         chatroom.addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
             public void windowClosing(java.awt.event.WindowEvent windowEvent) {
-                if (JOptionPane.showConfirmDialog(chatroom,
-                        "Are you sure you want to close this window?", "Close Window?",
-                        JOptionPane.YES_NO_OPTION,
-                        JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION){
 
-                    System.out.println("Ya termino ");
-                    chatroom.dispose();
-                    txtMensaje.setText("Good bye!");
-                    enviarMensaje();
-                }
+                System.out.println("Cierra cola priv");
+                txtMensaje.setText("Good bye!");
+                destinatario = usuario.getClavePrivada();
+                enviarMensaje(-1);
+                chatroom.dispose();
+
             }
         });
 
@@ -57,7 +54,7 @@ public class ChatSender extends Thread{
         });
         btnEnviar.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                enviarMensaje();
+                enviarMensaje(1);
             }
         });
     }
@@ -66,9 +63,12 @@ public class ChatSender extends Thread{
 
     }
 
-    public void enviarMensaje(){
+    public void enviarMensaje(int opcion){
         String texto = txtMensaje.getText();
-        destinatario = cbDestinatario.getSelectedItem().toString();
+        if(opcion>0)
+            destinatario = cbDestinatario.getSelectedItem().toString();
+
+
         if(!texto.equals("")) {
             try {
 
@@ -105,3 +105,4 @@ public class ChatSender extends Thread{
 
     }
 }
+

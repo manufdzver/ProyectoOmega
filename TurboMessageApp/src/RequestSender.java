@@ -37,23 +37,26 @@ public class RequestSender extends Thread{
         chatroom.addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
             public void windowClosing(java.awt.event.WindowEvent windowEvent) {
-                    System.out.println("Ya termino ");
-                    chatroom.dispose();
-                    txtMensaje.setText("Good bye!");
-                    destinatario = usuario.getNombre();
-                    enviarSolicitud();
+                System.out.println("Cierra cola publica");
+                txtMensaje.setText("Good bye!");
+                enviarSolicitud(-1);
+                chatroom.dispose();
             }
         });
 
         btnSolicitud.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                enviarSolicitud();
+                enviarSolicitud(1);
             }
         });
     }
 
-    public void enviarSolicitud(){
-        String destino = txtSolicitud.getText();
+    public void enviarSolicitud(int opcion){
+        String destino;
+        if(opcion>0)
+            destino = txtSolicitud.getText();
+        else
+            destino = usuario.getNombre();
         if(!destino.equals("")) {
             try {
                 ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(url);
@@ -90,3 +93,4 @@ public class RequestSender extends Thread{
 
     }
 }
+
