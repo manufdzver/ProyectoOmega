@@ -58,19 +58,34 @@ public class RequestReciever extends Thread{
                 mensaje = (Mensaje) objMessageReciever.getObject();//Lee el primer mensaje en la cola
                 if (mensaje != null) {
                     if(mensaje.getTipo()==3){ //Pregunta si quieres ser amigo
-                        //TODO preguntar si acepta o no
                         Usuario autor = directorioTotal.get(mensaje.getClavePrivada());
-                        textField.setText(textField.getText() + "\n"+"Te agregó: " +autor.getNombre());
-                        usuario.addDirectorio(autor);
-                        actualizaDirectorio();
-                        aceptarSolicitud(autor.getNombre());
+                        //Pop-up para aceptar o no aceptar solicitud:
+                        int dialogButton = JOptionPane.YES_NO_OPTION;
+                        int dialogResult = JOptionPane.showConfirmDialog (null,  usuario.getNombre() +": Haz recibido una solicitud de amistad de "+ autor.getNombre()+"\n¿Aceptas?","Solicitud de amistad",dialogButton);
+                        if(dialogResult == JOptionPane.YES_OPTION){
+                            textField.setText(textField.getText() + "\n    (Haz aceptado la solicitud de "+autor.getNombre()+ ").");
+                            System.out.println("Si acepto la solicitud de " + autor.getNombre());
+                            usuario.addDirectorio(autor);
+                            actualizaDirectorio();
+                            aceptarSolicitud(autor.getNombre(),4);
+                        }
+                        else{
+                            textField.setText(textField.getText() + "\n    (Haz rechazado la solicitud de "+autor.getNombre()+ ").");
+                            aceptarSolicitud(autor.getNombre(),1);
+                        }
+                        //textField.setText(textField.getText() + "\n"+"Te agregó: " +autor.getNombre());
+
                     }
                     if(mensaje.getTipo()==4){//recibe una respuesta de "Si" a la solicitud y actualiza directorio
                         Usuario autor = directorioTotal.get(mensaje.getClavePrivada());
 
-                        textField.setText(textField.getText() + "\n"+"Tu solicitud fue aceptada por: " +autor.getNombre());
+                        textField.setText(textField.getText() + "\n    ("+autor.getNombre()+ " ha ACEPTADO tu solicitud).");
                         usuario.addDirectorio(autor);
                         actualizaDirectorio();
+                    }
+                    if(mensaje.getTipo()==1){//recibe una respuesta de "Si" a la solicitud y actualiza directorio
+                        Usuario autor = directorioTotal.get(mensaje.getClavePrivada());
+                        textField.setText(textField.getText() + "\n    ("+ autor.getNombre()+ " ha RECHAZADO tu solicitud)." );
                     }
                 }
                 if (mensaje != null && mensaje.getMensaje().equals("Good bye!")) {
@@ -97,7 +112,7 @@ public class RequestReciever extends Thread{
             cbDestinatario.addItem(mapElement.getValue());
         }
     }
-    public void aceptarSolicitud(String destino) {
+    public void aceptarSolicitud(String destino, int tipo) {
         if (!destino.equals("")) {
             try {
                 ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(url);
@@ -113,7 +128,7 @@ public class RequestReciever extends Thread{
 
                 mensaje.setMensaje("Solicitud de amistad");
                 mensaje.setClavePrivada(usuario.getClavePrivada());
-                mensaje.setTipo(4);
+                mensaje.setTipo(tipo);
                 System.out.println("Sending: aceptacion a Destinatario: " + destino + "\n de: " + usuario.getNombre());
                 objMessageSender.setObject(mensaje);
                 messageProducer.send(objMessageSender);

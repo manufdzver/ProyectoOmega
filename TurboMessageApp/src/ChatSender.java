@@ -41,9 +41,10 @@ public class ChatSender extends Thread{
                 System.out.println("Cierra cola priv");
                 txtMensaje.setText("Good bye!");
                 destinatario = usuario.getClavePrivada();
+                mensaje.setTipo(2);
                 enviarMensaje(-1);
                 chatroom.dispose();
-                mensaje.setTipo(2);
+
 
             }
         });
@@ -66,12 +67,12 @@ public class ChatSender extends Thread{
 
     public void enviarMensaje(int opcion){
         String texto = txtMensaje.getText();
-        if(opcion>0)
+        if(opcion>0 && cbDestinatario.getSelectedItem()!=null) {
             destinatario = cbDestinatario.getSelectedItem().toString();
             mensaje.setTipo(1);
-        if(!texto.equals("")) {
+        }
+        if(!texto.equals("") && cbDestinatario.getSelectedItem()!=null) {
             try {
-
                 ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(url);
                 connectionFactory.setTrustAllPackages(true);
                 Connection connection = connectionFactory.createConnection(); //Crea la conexion

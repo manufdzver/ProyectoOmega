@@ -56,10 +56,13 @@ public class ChatReciever extends Thread{
                 if (mensaje != null) {
                     Usuario autor = directorioTotal.get(mensaje.getClavePrivada());
                     System.out.println("Message received");
-                    textField.setText(textField.getText() + "\n"+autor.getNombre()+"-"+mensaje.getMensaje());
                     if(mensaje.getTipo()==1){
+                        textField.setText(textField.getText() + "\n"+autor.getNombre()+"-"+mensaje.getMensaje());
                         mensajeLeido(autor.getClavePrivada(), mensaje.getMensaje());
                         mensaje.setTipo(2);
+                    }
+                    else{
+                        textField.setText(textField.getText() + "\n    ("+autor.getNombre()+" "+mensaje.getMensaje()+")");
                     }
                 }
                 if (mensaje != null && mensaje.getMensaje().equals("Good bye!")) {
@@ -90,7 +93,7 @@ public class ChatReciever extends Thread{
                 messageProducer = session.createProducer(producer);
                 objMessageSender = session.createObjectMessage();
 
-                mensaje.setMensaje("...........leyó tu mensaje............"+mens);
+                mensaje.setMensaje("leyó tu mensaje......."+mens);
                 mensaje.setClavePrivada(usuario.getClavePrivada());
                 mensaje.setTipo(3);
                 System.out.println("Sending: aceptacion a Destinatario: " + destino + "\n de: " + usuario.getNombre());
