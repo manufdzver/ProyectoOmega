@@ -43,6 +43,7 @@ public class ChatSender extends Thread{
                 destinatario = usuario.getClavePrivada();
                 enviarMensaje(-1);
                 chatroom.dispose();
+                mensaje.setTipo(2);
 
             }
         });
@@ -67,7 +68,7 @@ public class ChatSender extends Thread{
         String texto = txtMensaje.getText();
         if(opcion>0)
             destinatario = cbDestinatario.getSelectedItem().toString();
-
+            mensaje.setTipo(1);
         if(!texto.equals("")) {
             try {
 
@@ -84,7 +85,7 @@ public class ChatSender extends Thread{
 
                 mensaje.setMensaje(texto);
                 mensaje.setClavePrivada(usuario.getClavePrivada());
-                mensaje.setTipo(1);
+
                 System.out.println("Sending: " + texto + ", Destinatario: " + destinatario + "\n");
                 objMessageSender.setObject(mensaje);
                 messageProducer.send(objMessageSender);

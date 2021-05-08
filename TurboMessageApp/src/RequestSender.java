@@ -57,7 +57,7 @@ public class RequestSender extends Thread{
         if(opcion>0) {
             destino = txtSolicitud.getText();
             mensaje.setMensaje("Solicitud de amistad");
-            mensaje.setTipo(2);
+            mensaje.setTipo(3);
         }
         else
             destino = usuario.getNombre();

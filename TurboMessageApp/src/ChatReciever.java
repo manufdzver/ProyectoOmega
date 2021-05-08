@@ -19,6 +19,10 @@ public class ChatReciever extends Thread{
     private Connection connection;
     private HashMap<String, Usuario> directorioTotal;
 
+    private static MessageProducer messageProducer;
+    private static ObjectMessage objMessageSender;
+    private Mensaje mensaje = new Mensaje();
+
     public ChatReciever(JFrame frame, Usuario usr, JTextArea txt, HashMap directorioTotal){
         this.chatroom = frame;
         this.usuario = usr;
@@ -53,6 +57,10 @@ public class ChatReciever extends Thread{
                     Usuario autor = directorioTotal.get(mensaje.getClavePrivada());
                     System.out.println("Message received");
                     textField.setText(textField.getText() + "\n"+autor.getNombre()+"-"+mensaje.getMensaje());
+                    if(mensaje.getTipo()==1){
+                        mensajeLeido(autor.getClavePrivada(), mensaje.getMensaje());
+                        mensaje.setTipo(2);
+                    }
                 }
                 if (mensaje != null && mensaje.getMensaje().equals("Good bye!")) {
                     goodByeReceived = true;
@@ -66,6 +74,34 @@ public class ChatReciever extends Thread{
 
         } catch (JMSException e) {
             e.printStackTrace();
+        }
+    }
+    public void mensajeLeido(String destino, String mens) {
+        if (!destino.equals("")) {
+            try {
+                ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(url);
+                connectionFactory.setTrustAllPackages(true);
+                Connection connection = connectionFactory.createConnection(); //Crea la conexion
+                connection.start(); //Arranca la conexion
+
+                Session session = connection.createSession(false /*Transacter*/, Session.AUTO_ACKNOWLEDGE); //Cuando consume un mensaje, automaticamente manda el acknowledgment
+
+                Destination producer = session.createQueue(destino);
+                messageProducer = session.createProducer(producer);
+                objMessageSender = session.createObjectMessage();
+
+                mensaje.setMensaje("...........leyó tu mensaje............"+mens);
+                mensaje.setClavePrivada(usuario.getClavePrivada());
+                mensaje.setTipo(3);
+                System.out.println("Sending: aceptacion a Destinatario: " + destino + "\n de: " + usuario.getNombre());
+                objMessageSender.setObject(mensaje);
+                messageProducer.send(objMessageSender);
+
+            } catch (JMSException e) {
+                e.printStackTrace();
+            }
+        } else {
+            System.out.println("No hay nadie quien agregar");
         }
     }
 }

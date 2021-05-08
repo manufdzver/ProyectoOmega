@@ -57,7 +57,7 @@ public class RequestReciever extends Thread{
                 objMessageReciever = (ObjectMessage) messageConsumer.receive();
                 mensaje = (Mensaje) objMessageReciever.getObject();//Lee el primer mensaje en la cola
                 if (mensaje != null) {
-                    if(mensaje.getTipo()==2){ //Pregunta si quieres ser amigo
+                    if(mensaje.getTipo()==3){ //Pregunta si quieres ser amigo
                         //TODO preguntar si acepta o no
                         Usuario autor = directorioTotal.get(mensaje.getClavePrivada());
                         textField.setText(textField.getText() + "\n"+"Te agregó: " +autor.getNombre());
@@ -65,10 +65,10 @@ public class RequestReciever extends Thread{
                         actualizaDirectorio();
                         aceptarSolicitud(autor.getNombre());
                     }
-                    if(mensaje.getTipo()==3){//recibe una respuesta de "Si" a la solicitud y actualiza directorio
+                    if(mensaje.getTipo()==4){//recibe una respuesta de "Si" a la solicitud y actualiza directorio
                         Usuario autor = directorioTotal.get(mensaje.getClavePrivada());
 
-                        textField.setText(textField.getText() + "\n"+"Te agregó: " +autor.getNombre());
+                        textField.setText(textField.getText() + "\n"+"Tu solicitud fue aceptada por: " +autor.getNombre());
                         usuario.addDirectorio(autor);
                         actualizaDirectorio();
                     }
@@ -113,7 +113,7 @@ public class RequestReciever extends Thread{
 
                 mensaje.setMensaje("Solicitud de amistad");
                 mensaje.setClavePrivada(usuario.getClavePrivada());
-                mensaje.setTipo(3);
+                mensaje.setTipo(4);
                 System.out.println("Sending: aceptacion a Destinatario: " + destino + "\n de: " + usuario.getNombre());
                 objMessageSender.setObject(mensaje);
                 messageProducer.send(objMessageSender);
